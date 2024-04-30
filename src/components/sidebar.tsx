@@ -1,19 +1,9 @@
-import {
-    CardContent,
-    Checkbox,
-    Drawer,
-    FormControlLabel,
-    Stack,
-    Theme,
-    Toolbar,
-    Typography,
-    useMediaQuery
-} from "@mui/material";
-import {RadioButtonChecked, RadioButtonUnchecked} from "@mui/icons-material";
+import {Chip, Drawer, Stack, Theme, Toolbar, Typography, useMediaQuery} from "@mui/material";
 import {movies} from "../data/movies.ts";
 import {drawerWidth} from "./layout.tsx";
+import {useCallback, useEffect, useMemo} from "react";
+import {Clear} from "@mui/icons-material";
 import {create} from "zustand";
-import {useCallback, useEffect} from "react";
 
 interface UniqueData {
     languages: string[],
@@ -23,7 +13,20 @@ interface UniqueData {
 
 const Sidebar = () => {
 
-    const {isOpen, toggleSidebar, toggleLanguage, toggleCountry, toggleGenre} = useSidebar()
+    const {
+        isOpen,
+        toggleSidebar,
+        toggleLanguage,
+        toggleCountry,
+        toggleGenre,
+        resetLanguages,
+        resetCountries,
+        resetGenres,
+        resetFilters,
+        languages,
+        countries,
+        genres,
+    } = useSidebar()
     const isMobile = useMediaQuery<Theme>((theme) => theme.breakpoints.down("md"))
 
     useEffect(() => {
@@ -34,7 +37,7 @@ const Sidebar = () => {
         }
     }, [isMobile, toggleSidebar]);
 
-    const filterData = movies.reduce((previousValue, currentValue) => {
+    const filterData = useMemo(() => movies.reduce((previousValue, currentValue) => {
         const {movielanguages, moviecountries, moviegenres} = currentValue;
         return {
             languages: previousValue.languages.concat(movielanguages),
@@ -45,17 +48,18 @@ const Sidebar = () => {
         languages: [] as string[],
         countries: [] as string[],
         genres: [] as string[],
-    })
+    }), [])
 
-    const uniqueLanguages = Array.from(new Set(filterData.languages));
-    const uniqueCountries = Array.from(new Set(filterData.countries));
-    const uniqueGenres = Array.from(new Set(filterData.genres));
-
-    const uniqueData: UniqueData = {
-        genres: uniqueGenres,
-        languages: uniqueLanguages,
-        countries: uniqueCountries,
-    }
+    const uniqueData = useMemo<UniqueData>(() => {
+        const uniqueLanguages = Array.from(new Set(filterData.languages));
+        const uniqueCountries = Array.from(new Set(filterData.countries));
+        const uniqueGenres = Array.from(new Set(filterData.genres));
+        return {
+            genres: uniqueGenres,
+            languages: uniqueLanguages,
+            countries: uniqueCountries,
+        }
+    }, [])
 
     const setFilter = useCallback((key: keyof UniqueData) => {
         return (value: string) => {
@@ -72,6 +76,20 @@ const Sidebar = () => {
             }
         }
     }, [toggleCountry, toggleGenre, toggleLanguage])
+
+    const resetFilter = useCallback((key: keyof UniqueData) => {
+        switch (key) {
+            case "languages":
+                resetLanguages()
+                break;
+            case "countries":
+                resetCountries()
+                break;
+            case "genres":
+                resetGenres()
+                break;
+        }
+    }, [])
 
 
     return (
@@ -90,73 +108,77 @@ const Sidebar = () => {
             }}
         >
             <Toolbar/>
+            <Toolbar>
+                <Typography variant={"h3"}>Filter
+                    {(languages.length || countries.length || genres.length) > 0 && <Clear
+                        onClick={resetFilters}
+                    />}
+                </Typography>
+            </Toolbar>
             {
                 Object.keys(uniqueData).map((key) => {
+                    let isActivated = false;
+                    if (key === "languages" && languages.length > 0) {
+                        isActivated = true;
+                    } else if (key === "countries" && countries.length > 0) {
+                        isActivated = true;
+                    } else if (key === "genres" && genres.length > 0) {
+                        isActivated = true;
+                    }
                     return (
                         <Stack
                             sx={{
                                 width: "100%",
                             }}
                             key={key}>
-                            <Typography variant={"h4"}
-                                        textTransform={"capitalize"}
-                                        sx={{
-                                            textAlign: "center",
-                                            paddingY: "8px",
-                                            backgroundColor: "antiquewhite"
-                                        }}
-                            >{key}</Typography>
-                            <CardContent component={Stack} sx={{
-                                flexDirection: "row",
-                                flexWrap: "wrap",
-                                justifyContent: "center",
-                                gap: "8px",
-                                marginX: "auto",
-                            }}>
+                            <Typography
+                                variant={"h4"}
+                                textTransform={"capitalize"}
+                                textAlign={"center"}
+                                py={1}
+                                bgcolor={"antiquewhite"}
+                            >
+                                {key}
+                                {isActivated && <Clear
+                                    onClick={() => resetFilter(key as keyof UniqueData)}
+                                />}
+                            </Typography>
+                            <Stack
+                                direction={"row"}
+                                flexWrap={"wrap"}
+                                p={2}
+                                columnGap={1}
+                                rowGap={1}
+                            >
                                 {
                                     uniqueData[key as keyof UniqueData].map((item) => {
+                                        let isActived = false;
+                                        if (key === "languages" && languages.includes(item)) {
+                                            isActived = true;
+                                        } else if (key === "countries" && countries.includes(item)) {
+                                            isActived = true;
+                                        } else if (key === "genres" && genres.includes(item)) {
+                                            isActived = true;
+                                        }
                                         return (
-                                            <FormControlLabel
+                                            <Chip
                                                 key={item}
+                                                variant={isActived ? "filled" : "outlined"}
+                                                color={isActived ? "primary" : "default"}
                                                 label={item}
-                                                labelPlacement={"start"}
-                                                control={<Checkbox
-                                                    icon={<RadioButtonUnchecked/>}
-                                                    checkedIcon={<RadioButtonChecked/>}
-                                                    sx={{
-                                                        color: "black",
-                                                        '&.Mui-checked': {
-                                                            color: "black",
-                                                        },
-                                                    }}
-                                                />}
-                                                onChange={() => {
-                                                    setFilter(key as keyof UniqueData)(item)
-                                                }}
-                                                sx={{
-                                                    width: {
-                                                        xs: "100%",
-                                                        sm: "50%",
-                                                        md: "48%",
-                                                        lg: "45%",
-                                                    },
-                                                    backgroundColor: "antiquewhite",
-                                                    borderRadius: "10px",
-                                                    justifyContent: "space-between",
-                                                    margin: 0,
-                                                    padding: "2px 5px",
-                                                }}
+                                                onClick={() => setFilter(key as keyof UniqueData)(item)}
                                             />
                                         )
                                     })
                                 }
-                            </CardContent>
+                            </Stack>
                         </Stack>
                     )
                 })
             }
         </Drawer>
-    );
+    )
+        ;
 };
 
 export default Sidebar;
@@ -170,6 +192,9 @@ export interface SidebarStore {
     toggleCountry: (countries: string) => void;
     genres: string[];
     toggleGenre: (genres: string) => void;
+    resetLanguages: () => void;
+    resetCountries: () => void;
+    resetGenres: () => void;
     resetFilters: () => void;
 }
 
@@ -177,7 +202,6 @@ export const useSidebar = create<SidebarStore>((set, get) => ({
     isOpen: false,
     toggleSidebar: (open) => {
         const isOpen = open ?? !get().isOpen
-        console.log("=>(sidebar.tsx:173) isOpen", isOpen);
         set({isOpen})
     },
     languages: [],
@@ -202,5 +226,8 @@ export const useSidebar = create<SidebarStore>((set, get) => ({
             genres: genres.includes(genre) ? genres.filter((g) => g !== genre) : [...genres, genre]
         })
     },
+    resetLanguages: () => set({languages: []}),
+    resetCountries: () => set({countries: []}),
+    resetGenres: () => set({genres: []}),
     resetFilters: () => set({languages: [], countries: [], genres: []}),
 }));
