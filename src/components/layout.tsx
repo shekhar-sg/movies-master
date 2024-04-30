@@ -34,6 +34,7 @@ const Main = styled((props: BoxProps) => {
     return <Box
         component={"main"}
         sx={(theme) => ({
+            position: "relative",
             p: 3,
             transition: theme.transitions.create('margin', {
                 easing: theme.transitions.easing.sharp,

@@ -29,14 +29,14 @@ const MovieDetailCard = (props: MovieDetailCardProps) => {
     ]
 
     return (
-        <Box
+        <Stack
             key={imdbmovieid}
             component={motion.div}
             layout
             sx={{
                 position: "relative",
-                width: "300px",
-                height: "500px",
+                width:300,
+                aspectRatio: "2/3",
                 borderRadius: "10px",
                 boxShadow: "0 0 10px 0 rgba(0, 0, 0, 0.1)",
                 overflow: "hidden",
@@ -85,11 +85,19 @@ const MovieDetailCard = (props: MovieDetailCardProps) => {
                 p: 2,
                 zIndex: 2
             }}>
-                <Typography variant={"h4"} fontWeight={800} mb={1}
-                            textOverflow={"ellipsis"}
-                            overflow={"hidden"}
-                            whiteSpace={"nowrap"}
-                            title={movietitle}
+                <Typography
+                    variant={"h4"}
+                    fontWeight={800}
+                    fontSize={{
+                        xs: "h6.fontSize",
+                        sm: "h5.fontSize",
+                        md: "h4.fontSize",
+                    }}
+                    mb={1}
+                    textOverflow={"ellipsis"}
+                    overflow={"hidden"}
+                    whiteSpace={"nowrap"}
+                    title={movietitle}
                 >{movietitle}</Typography>
                 {moviesInfo.map((info) => {
                     const {infoTitle, infoValues} = info;
@@ -132,7 +140,7 @@ const MovieDetailCard = (props: MovieDetailCardProps) => {
                     )
                 })}
             </Box>
-        </Box>
+        </Stack>
     );
 };
 

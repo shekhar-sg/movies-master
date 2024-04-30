@@ -1,8 +1,19 @@
-import {Chip, Drawer, Stack, Theme, Toolbar, Typography, useMediaQuery} from "@mui/material";
+import {
+    Button,
+    Chip,
+    Divider,
+    Drawer,
+    IconButton,
+    Stack,
+    Theme,
+    Toolbar,
+    Typography,
+    useMediaQuery
+} from "@mui/material";
 import {movies} from "../data/movies.ts";
 import {drawerWidth} from "./layout.tsx";
 import {useCallback, useEffect, useMemo} from "react";
-import {Clear} from "@mui/icons-material";
+import {Restore} from "@mui/icons-material";
 import {create} from "zustand";
 
 interface UniqueData {
@@ -89,7 +100,7 @@ const Sidebar = () => {
                 resetGenres()
                 break;
         }
-    }, [])
+    }, [resetCountries, resetGenres, resetLanguages])
 
 
     return (
@@ -104,16 +115,31 @@ const Sidebar = () => {
                 '& .MuiDrawer-paper': {
                     width: drawerWidth,
                     boxSizing: 'border-box',
+                    bgcolor: "grey.300",
+                    '&::-webkit-scrollbar': {
+                        display: 'none',
+                    },
+                    '-ms-overflow-style': 'none',
+                    scrollbarWidth: 'none',
+
+
                 },
             }}
         >
             <Toolbar/>
-            <Toolbar>
-                <Typography variant={"h3"}>Filter
-                    {(languages.length || countries.length || genres.length) > 0 && <Clear
+            <Toolbar sx={{
+                justifyContent: "space-between",
+            }}>
+                <Typography variant={"h5"} fontWeight={"bold"}>Filters</Typography>
+                {(languages.length || countries.length || genres.length) > 0 &&
+                    <Button
+                        color={"secondary"}
+                        variant={"text"}
                         onClick={resetFilters}
-                    />}
-                </Typography>
+                    >
+                        reset all
+                    </Button>
+                }
             </Toolbar>
             {
                 Object.keys(uniqueData).map((key) => {
@@ -126,45 +152,55 @@ const Sidebar = () => {
                         isActivated = true;
                     }
                     return (
-                        <Stack
-                            sx={{
-                                width: "100%",
-                            }}
-                            key={key}>
-                            <Typography
-                                variant={"h4"}
-                                textTransform={"capitalize"}
-                                textAlign={"center"}
-                                py={1}
-                                bgcolor={"antiquewhite"}
-                            >
-                                {key}
-                                {isActivated && <Clear
-                                    onClick={() => resetFilter(key as keyof UniqueData)}
-                                />}
-                            </Typography>
+                        <Stack width={"100%"}
+                               key={key}>
+                            <Divider variant={"middle"} sx={{
+                                "&:before, &:after": {
+                                    borderColor: "black",
+                                },
+                            }}>
+                                <Chip label={key}
+                                      sx={{fontWeight: "bold", textTransform: "capitalize", letterSpacing: "1px"}}/>
+                            </Divider>
                             <Stack
                                 direction={"row"}
                                 flexWrap={"wrap"}
                                 p={2}
                                 columnGap={1}
                                 rowGap={1}
+                                position={"relative"}
                             >
                                 {
+                                    isActivated &&
+
+                                    <IconButton
+                                        color={"secondary"}
+                                        sx={{
+                                            position: "absolute",
+                                            right: "10px",
+                                            top: "-20px",
+                                            marginLeft: "24px"
+                                        }}
+                                        onClick={() => resetFilter(key as keyof UniqueData)}
+                                    >
+                                        <Restore/>
+                                    </IconButton>
+                                }
+                                {
                                     uniqueData[key as keyof UniqueData].map((item) => {
-                                        let isActived = false;
+                                        let isActivated = false;
                                         if (key === "languages" && languages.includes(item)) {
-                                            isActived = true;
+                                            isActivated = true;
                                         } else if (key === "countries" && countries.includes(item)) {
-                                            isActived = true;
+                                            isActivated = true;
                                         } else if (key === "genres" && genres.includes(item)) {
-                                            isActived = true;
+                                            isActivated = true;
                                         }
                                         return (
                                             <Chip
                                                 key={item}
-                                                variant={isActived ? "filled" : "outlined"}
-                                                color={isActived ? "primary" : "default"}
+                                                variant={isActivated ? "filled" : "outlined"}
+                                                color={isActivated ? "primary" : "default"}
                                                 label={item}
                                                 onClick={() => setFilter(key as keyof UniqueData)(item)}
                                             />

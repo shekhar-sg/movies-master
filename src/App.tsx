@@ -7,7 +7,7 @@ import {AnimatePresence} from "framer-motion";
 import {useMemo} from "react";
 
 const App = () => {
-    const {toggleSidebar, languages, countries, genres, resetFilters} = useSidebar()
+    const {languages, countries, genres, resetFilters} = useSidebar()
 
     const filteredMovies = useMemo(() => movies.filter((movie) => {
         const {movielanguages, moviecountries, moviegenres} = movie
@@ -26,17 +26,12 @@ const App = () => {
 
     return (
         <Layout>
-            <Button
-                onClick={() => toggleSidebar()}
-            >
-                Filter
-            </Button>
+
             <Stack
                 sx={{
                     flexDirection: "row",
                     flexWrap: "wrap",
-                    justifyContent: "center",
-                    mt: "100px",
+                    justifyContent: "flex-start",
                 }}
                 columnGap={2}
                 rowGap={2}
