@@ -1,9 +1,19 @@
-import {CardContent, Checkbox, Drawer, FormControlLabel, Stack, Toolbar, Typography} from "@mui/material";
+import {
+    CardContent,
+    Checkbox,
+    Drawer,
+    FormControlLabel,
+    Stack,
+    Theme,
+    Toolbar,
+    Typography,
+    useMediaQuery
+} from "@mui/material";
 import {RadioButtonChecked, RadioButtonUnchecked} from "@mui/icons-material";
 import {movies} from "../data/movies.ts";
 import {drawerWidth} from "./layout.tsx";
 import {create} from "zustand";
-import {useCallback} from "react";
+import {useCallback, useEffect} from "react";
 
 interface UniqueData {
     languages: string[],
@@ -14,6 +24,15 @@ interface UniqueData {
 const Sidebar = () => {
 
     const {isOpen, toggleSidebar, toggleLanguage, toggleCountry, toggleGenre} = useSidebar()
+    const isMobile = useMediaQuery<Theme>((theme) => theme.breakpoints.down("md"))
+
+    useEffect(() => {
+        if (!isMobile) {
+            toggleSidebar(true)
+        } else {
+            toggleSidebar(false)
+        }
+    }, [isMobile, toggleSidebar]);
 
     const filterData = movies.reduce((previousValue, currentValue) => {
         const {movielanguages, moviecountries, moviegenres} = currentValue;
@@ -32,7 +51,7 @@ const Sidebar = () => {
     const uniqueCountries = Array.from(new Set(filterData.countries));
     const uniqueGenres = Array.from(new Set(filterData.genres));
 
-    const uniqueData:UniqueData = {
+    const uniqueData: UniqueData = {
         genres: uniqueGenres,
         languages: uniqueLanguages,
         countries: uniqueCountries,
@@ -58,7 +77,7 @@ const Sidebar = () => {
     return (
         <Drawer
             anchor={"left"}
-            variant={"persistent"}
+            variant={isMobile ? "temporary" : "persistent"}
             open={isOpen}
             onClose={() => toggleSidebar(false)}
             sx={{
@@ -155,9 +174,10 @@ export interface SidebarStore {
 }
 
 export const useSidebar = create<SidebarStore>((set, get) => ({
-    isOpen: true,
+    isOpen: false,
     toggleSidebar: (open) => {
         const isOpen = open ?? !get().isOpen
+        console.log("=>(sidebar.tsx:173) isOpen", isOpen);
         set({isOpen})
     },
     languages: [],
