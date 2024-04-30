@@ -1,5 +1,6 @@
 import {Box, Stack, Tooltip, Typography} from "@mui/material";
 import {Movie} from "../types/movie.type.ts";
+import {motion} from "framer-motion";
 
 interface MovieDetailCardProps {
     movie: Movie;
@@ -7,7 +8,7 @@ interface MovieDetailCardProps {
 
 const MovieDetailCard = (props: MovieDetailCardProps) => {
     const {movie} = props;
-    const {movietitle, moviemainphotos, moviegenres, movielanguages, moviecountries} = movie;
+    const {movietitle, moviemainphotos, moviegenres, movielanguages, moviecountries, imdbmovieid} = movie;
 
     const moviesInfo: {
         infoTitle: string,
@@ -28,47 +29,51 @@ const MovieDetailCard = (props: MovieDetailCardProps) => {
     ]
 
     return (
-        <Box sx={{
-            position: "relative",
-            width: "300px",
-            height: "500px",
-            borderRadius: "10px",
-            boxShadow: "0 0 10px 0 rgba(0, 0, 0, 0.1)",
-            overflow: "hidden",
-            "&:before": {
-                content: "''",
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: "rgba(0, 0, 0, 0.3)",
-                transition: "all 0.2s ease-in-out",
-                zIndex: 1,
-            },
-            "&:after": {
-                content: "''",
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundImage: `url(${moviemainphotos[0]})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
-                transition: "all 1.2s ease-in-out",
-                zIndex: 0,
-            },
-            "&:hover": {
+        <Box
+            key={imdbmovieid}
+            component={motion.div}
+            layout
+            sx={{
+                position: "relative",
+                width: "300px",
+                height: "500px",
+                borderRadius: "10px",
+                boxShadow: "0 0 10px 0 rgba(0, 0, 0, 0.1)",
+                overflow: "hidden",
                 "&:before": {
-                    backgroundColor: "rgba(0, 0, 0, 0.1)",
+                    content: "''",
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: "rgba(0, 0, 0, 0.3)",
+                    transition: "all 0.2s ease-in-out",
+                    zIndex: 1,
                 },
                 "&:after": {
-                    transform: "scale(1.1)",
+                    content: "''",
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundImage: `url(${moviemainphotos[0]})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                    transition: "all 1.2s ease-in-out",
+                    zIndex: 0,
+                },
+                "&:hover": {
+                    "&:before": {
+                        backgroundColor: "rgba(0, 0, 0, 0.1)",
+                    },
+                    "&:after": {
+                        transform: "scale(1.1)",
+                    }
                 }
-            }
-        }}>
+            }}>
             <Box sx={{
                 position: "absolute",
                 bottom: 0,
