@@ -1,30 +1,40 @@
-# React + TypeScript + Vite
+# About application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+In this project we are having movies list with active filters.
+We can filter the movies based on the genre, languages and countries.
 
-Currently, two official plugins are available:
+## Used Libraries
+1. Reactjs with Typescript
+2. Zustand for state management
+3. Material UI for UI components
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Installing Dependencies
 
-## Expanding the ESLint configuration
+You can install the dependencies by running the following command in your terminal:
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+```bash
+npm install
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## Running the application in Development mode
+
+You can start the server in development mode by running the following command:
+
+```bash
+npm run dev
+```
+
+## Building the application
+
+You can build the application by running the following command:
+
+```bash
+npm run build
+```
+
+## Start the application after build
+
+you can start the application after building it by running the following command:
+```bash
+npm run preview
+```
